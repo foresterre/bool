@@ -3,6 +3,14 @@
 
 use core::ops::{BitAnd, BitAndAssign};
 
+#[cfg(global_values)]
+#[allow(non_upper_case_globals)]
+pub static True: Bool = Bool::True;
+
+#[cfg(global_values)]
+#[allow(non_upper_case_globals)]
+pub static False: Bool = Bool::False;
+
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum Bool {
     True,
@@ -250,6 +258,24 @@ mod tests {
         #[allow(non_snake_case)]
         fn crate_Bool() {
             assert_eq!(core::mem::size_of::<Bool>(), 1)
+        }
+    }
+
+    #[cfg(global_values)]
+    mod globals_for_usability {
+        use super::*;
+
+        ide!();
+
+        #[pm(input = {
+            True,
+            False,
+        }, expected = {
+            Bool::True,
+            Bool::False,
+        })]
+        fn test_cases(input: Bool, expected: Bool) {
+            assert_eq!(input, expected);
         }
     }
 
