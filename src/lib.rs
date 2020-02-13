@@ -18,7 +18,7 @@ impl Bool {
         }
     }
 
-    /// Logical and.
+    /// Logical `and`.
     ///
     /// Truth table where T represents `True` and F represents `False`:
     ///
@@ -41,6 +41,32 @@ impl Bool {
             Self::False
         } else {
             Self::True
+        }
+    }
+
+    /// Logical `or`.
+    ///
+    /// Truth table where T represents `True` and F represents `False`:
+    ///
+    /// |------------|---------
+    /// | self | rhs | return |
+    /// |------------|---------
+    /// | F    | F   | F      |
+    /// | F    | T   | T      |
+    /// | T    | F   | T      |
+    /// | T    | T   | T      |
+    /// |------------|--------|
+    ///
+    /// // TODO fix doc links
+    /// [`True`]: enum.bool.True
+    /// [`False`]: enum.Bool.False
+    #[inline]
+    pub fn logical_or<R: Into<Self>>(self, rhs: R) -> Self {
+        let rhs = rhs.into();
+        if self != Self::False || rhs != Self::False {
+            Self::True
+        } else {
+            Self::False
         }
     }
 }
@@ -148,6 +174,32 @@ mod tests {
         }
     }
 
+    mod logical_or {
+        use super::*;
+
+        ide!();
+
+        #[pm(lhs = {
+            Bool::False,
+            Bool::False,
+            Bool::True,
+            Bool::True,
+        }, rhs = {
+            Bool::False,
+            Bool::True,
+            Bool::False,
+            Bool::True,
+        }, expected = {
+            Bool::False,
+            Bool::True,
+            Bool::True,
+            Bool::True,
+        })]
+        fn test_cases(lhs: Bool, rhs: Bool, expected: Bool) {
+            assert_eq!(lhs.logical_or(rhs), expected);
+        }
+    }
+
     #[allow(non_snake_case)]
     mod from_bool_for_Bool {
         use super::*;
@@ -186,7 +238,6 @@ mod tests {
         }
     }
 
-    #[allow(non_snake_case)]
     mod size {
         use super::*;
 
