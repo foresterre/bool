@@ -1,10 +1,13 @@
 [package]
 name = "bool"
-version = "1.0.0"
+version = "0.1.0"
 authors = ["foresterre <garm@ilumeo.com>"]
 edition = "2018"
-description = "Straightforward re-useable enum based boolean"
+description = "Straightforward re-useable enum based boolean (which you likely won't need =))"
 license = "Apache-2.0 OR MIT"
+repository = "https://github.com/foresterre/bool"
+exclude = [".idea", ".vscode"]
+categories = [ "no-std", ]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
