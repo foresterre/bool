@@ -48,7 +48,7 @@ impl Bool {
     /// [`False`]: enum.Bool.html#variant.False
     /// [`and`]: https://en.wikipedia.org/wiki/Boolean_algebra#Operations
     #[inline]
-    pub fn logical_and<R: Into<Self>>(self, rhs: R) -> Self {
+    pub fn and<R: Into<Self>>(self, rhs: R) -> Self {
         let rhs = rhs.into();
         if self == Self::False || rhs == Self::False {
             Self::False
@@ -73,7 +73,7 @@ impl Bool {
     /// [`False`]: enum.Bool.html#variant.False
     /// [`or`]: https://en.wikipedia.org/wiki/Boolean_algebra#Operations
     #[inline]
-    pub fn logical_or<R: Into<Self>>(self, rhs: R) -> Self {
+    pub fn or<R: Into<Self>>(self, rhs: R) -> Self {
         let rhs = rhs.into();
         if self != Self::False || rhs != Self::False {
             Self::True
@@ -96,7 +96,7 @@ impl Bool {
     /// [`False`]: enum.Bool.html#variant.False
     /// [`not`]: https://en.wikipedia.org/wiki/Boolean_algebra#Operations
     #[inline]
-    pub fn logical_not(self) -> Self {
+    pub fn not(self) -> Self {
         if self == Self::True {
             Self::False
         } else {
@@ -120,7 +120,7 @@ impl Bool {
     /// [`False`]: enum.Bool.html#variant.False
     /// [`xor`]: https://en.wikipedia.org/wiki/Boolean_algebra#Operations
     #[inline]
-    pub fn logical_implication<R: Into<Self>>(self, rhs: R) -> Self {
+    pub fn implication<R: Into<Self>>(self, rhs: R) -> Self {
         let rhs = rhs.into();
         match (self, rhs) {
             (Self::True, Self::False) => Self::False,
@@ -144,7 +144,7 @@ impl Bool {
     /// [`False`]: enum.Bool.html#variant.False
     /// [`xor`]: https://en.wikipedia.org/wiki/Boolean_algebra#Operations
     #[inline]
-    pub fn logical_xor<R: Into<Self>>(self, rhs: R) -> Self {
+    pub fn xor<R: Into<Self>>(self, rhs: R) -> Self {
         let rhs = rhs.into();
         match (self, rhs) {
             (Self::True, Self::False) | (Self::False, Self::True) => Self::True,
@@ -168,7 +168,7 @@ impl Bool {
     /// [`False`]: enum.Bool.html#variant.False
     /// [`equivalence`]: https://en.wikipedia.org/wiki/Boolean_algebra#Operations
     #[inline]
-    pub fn logical_equivalence<R: Into<Self>>(self, rhs: R) -> Self {
+    pub fn equivalence<R: Into<Self>>(self, rhs: R) -> Self {
         let rhs = rhs.into();
         match (self, rhs) {
             (Self::True, Self::True) | (Self::False, Self::False) => Self::True,
@@ -394,35 +394,35 @@ mod tests {
     mod logical_operations {
         use super::*;
 
-        test_logical_operation! {logical_and,
+        test_logical_operation! {and,
             Bool::False,
             Bool::False,
             Bool::False,
             Bool::True
         }
 
-        test_logical_operation! {logical_or,
+        test_logical_operation! {or,
             Bool::False,
             Bool::True,
             Bool::True,
             Bool::True
         }
 
-        test_logical_operation! {logical_implication,
+        test_logical_operation! {implication,
             Bool::True,
             Bool::True,
             Bool::False,
             Bool::True
         }
 
-        test_logical_operation! {logical_xor,
+        test_logical_operation! {xor,
             Bool::False,
             Bool::True,
             Bool::True,
             Bool::False
         }
 
-        test_logical_operation! {logical_equivalence,
+        test_logical_operation! {equivalence,
             Bool::True,
             Bool::False,
             Bool::False,
@@ -443,7 +443,7 @@ mod tests {
         Bool::True,
         })]
         fn test_cases(lhs: Bool, expected: Bool) {
-            assert_eq!(lhs.logical_not(), expected);
+            assert_eq!(lhs.not(), expected);
         }
     }
 
@@ -702,15 +702,9 @@ mod tests {
             Bool::True,
         })]
         fn de_morgan(lhs: Bool, rhs: Bool) {
-            assert_eq!(
-                lhs.logical_not().logical_and(rhs.logical_not()),
-                (lhs.logical_or(rhs)).logical_not()
-            );
+            assert_eq!(lhs.not().and(rhs.not()), (lhs.or(rhs)).not());
 
-            assert_eq!(
-                lhs.logical_not().logical_or(rhs.logical_not()),
-                (lhs.logical_and(rhs)).logical_not()
-            );
+            assert_eq!(lhs.not().or(rhs.not()), (lhs.and(rhs)).not());
         }
     }
 
