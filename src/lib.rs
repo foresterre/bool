@@ -317,6 +317,7 @@ impl Default for Bool {
 ///
 /// Example:
 /// ```
+/// # use ::bool::{b, Bool};
 /// if b!(Bool::True) {
 ///     println!("Always true :)!");
 /// }
