@@ -69,8 +69,14 @@ jobs:
 #      - name: Build documentation for all workspace crates
 #        run: cargo doc --verbose --all
 
-      - name: Test all workspace crates
+      - name: Test all workspace crates (default features)
         run: cargo test --verbose --all
+
+      - name: Test all workspace crates (no default features)
+        run: cargo test --verbose --all --no-default-features
+
+      - name: Test all workspace crates (all features)
+          run: cargo test --verbose --all --all-features
 
   rustfmt:
     name: rustfmt

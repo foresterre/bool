@@ -7,7 +7,11 @@
 
 #![no_std]
 
+#[cfg(feature = "has_alloc")]
+extern crate alloc;
+
 use core::ops::{BitAnd, BitAndAssign, BitOr, BitOrAssign, BitXor, BitXorAssign, Not};
+use core::str::FromStr;
 
 #[cfg(global_values)]
 #[allow(non_upper_case_globals)]
@@ -318,20 +322,63 @@ impl Default for Boolean {
     }
 }
 
+impl FromStr for Boolean {
+    type Err = BooleanError;
+
+    /// Important: if the crate has the alloc crate is available and the 'has_alloc' feature is enabled,
+    /// it allows for a "true" or "false" value with any casing (e.g. "True" or "trUE" are equivalent to "true").
+    /// If the feature 'has_alloc' is set to false, only the values "true", "True", "TRUE", "false",
+    /// "False" and "FALSE" will be accepted as valid inputs.
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        #[cfg(feature = "has_alloc")]
+        {
+            match s.to_ascii_lowercase().as_str() {
+                "true" => Ok(Self::True),
+                "false" => Ok(Self::False),
+                _ => Err(BooleanError::UnableToConvertFromStr),
+            }
+        }
+
+        #[cfg(not(feature = "has_alloc"))]
+        {
+            match s {
+                "true" | "True" | "TRUE" => Ok(Self::True),
+                "false" | "False" | "FALSE" => Ok(Self::False),
+                _ => Err(BooleanError::UnableToConvertFromStr),
+            }
+        }
+    }
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub enum BooleanError {
+    UnableToConvertFromStr,
+}
+
+impl core::fmt::Display for BooleanError {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        match self {
+            Self::UnableToConvertFromStr => f.write_str(
+                r#"Unable to convert given string to a Boolean (expected value "true" or "false")"#,
+            ),
+        }
+    }
+}
+
 /// Transforms a value with type [`Bool`] into the equivalent value with the primitive type [`bool`].
 ///
 /// Equivalent to calling `Into::<bool>::into` on a [`Bool`] value.
 ///
 /// Example:
 /// ```
-/// # use ::bool::{b, Bool};
+/// # use ::bool::{b, Boolean};
 /// if b!(Boolean::True) {
 ///     println!("Always true :)!");
 /// }
 /// ```
 ///
 /// [`Boolean`]: enum.Boolean.html
-/// [`bool`]: https://doc.rust-lang.org/std/primitive.bool.html
+/// [`bool`]: https://doc.rust-lang.org/core/primitive.bool.html
 #[macro_export]
 macro_rules! b {
     ($cond:expr) => {{
@@ -740,6 +787,53 @@ mod tests {
         fn then() {
             assert_eq!(Boolean::True.then(|| 1u8), Some(1u8));
             assert_eq!(Boolean::False.then(|| 1u8), None);
+        }
+    }
+
+    mod from_str {
+        use super::*;
+
+        ide!();
+
+        #[cfg(feature = "has_alloc")]
+        const EXPECTED_RARE_CASE_FALSE: Result<Boolean, BooleanError> = Ok(Boolean::False);
+
+        #[cfg(not(feature = "has_alloc"))]
+        const EXPECTED_RARE_CASE_FALSE: Result<Boolean, BooleanError> =
+            Err(BooleanError::UnableToConvertFromStr);
+
+        #[cfg(feature = "has_alloc")]
+        const EXPECTED_RARE_CASE_TRUE: Result<Boolean, BooleanError> = Ok(Boolean::True);
+
+        #[cfg(not(feature = "has_alloc"))]
+        const EXPECTED_RARE_CASE_TRUE: Result<Boolean, BooleanError> =
+            Err(BooleanError::UnableToConvertFromStr);
+
+        #[pm(input = {
+            "true",
+            "True",
+            "TRUE",
+            "false",
+            "False",
+            "FALSE",
+            "falsE",
+            "trUE",
+            "",
+            "❤",
+        }, expected = {
+            Ok(Boolean::True),
+            Ok(Boolean::True),
+            Ok(Boolean::True),
+            Ok(Boolean::False),
+            Ok(Boolean::False),
+            Ok(Boolean::False),
+            EXPECTED_RARE_CASE_FALSE,
+            EXPECTED_RARE_CASE_TRUE,
+            Err(BooleanError::UnableToConvertFromStr),
+            Err(BooleanError::UnableToConvertFromStr),
+        })]
+        fn from_str_test(input: &str, expected: Result<Boolean, BooleanError>) {
+            assert_eq!(FromStr::from_str(input), expected);
         }
     }
 }

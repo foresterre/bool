@@ -12,10 +12,14 @@ categories = [ "no-std", ]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [features]
-default = [ "global_values", ]
+default = [ "global_values", "has_alloc"]
 
-# let this crate define True as Bool::True and false as Bool::False
+# let this crate define True as Boolean::True and False as Boolean::False
 global_values = []
+
+# behaviour may differ when alloc is available e.g., behaviour of FromStr allows any casing (upper/lowercase) when this
+# feature is enabled (the alloc crate should be available!)
+has_alloc = []
 
 [dependencies]
 
