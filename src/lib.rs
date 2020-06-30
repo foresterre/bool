@@ -1,29 +1,36 @@
+//! This crate provides the boolean algebra based types [`True`] and [`False] as enum values.
+//! They serve a similar purpose as the built-in primitive boolean types `true` and  `false`
+//! respectively (but are not interchangeable).
+//!
+//! [`True`]: enum.Boolean.html#variant.True
+//! [`False`]: enum.Boolean.html#variant.False
+
 #![no_std]
 
 use core::ops::{BitAnd, BitAndAssign, BitOr, BitOrAssign, BitXor, BitXorAssign, Not};
 
 #[cfg(global_values)]
 #[allow(non_upper_case_globals)]
-pub static True: Bool = Bool::True;
+pub static True: Boolean = Boolean::True;
 
 #[cfg(global_values)]
 #[allow(non_upper_case_globals)]
-pub static False: Bool = Bool::False;
+pub static False: Boolean = Boolean::False;
 
 /// Enum with two possible values: `True` or `False` which represent the [`logical`]
 /// values `true` and `false` respectively.
 ///
 /// [`logical`]: https://en.wikipedia.org/wiki/Boolean_algebra
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Ord, PartialOrd)]
-pub enum Bool {
+pub enum Boolean {
     False,
     True,
 }
 
-impl Bool {
-    /// Creates a `Bool` dependent on the given primitive `bool`.
-    /// If the value is `true`, it will return `Bool::True` and
-    /// if the value is`false` will return `Bool::False`
+impl Boolean {
+    /// Creates a `Boolean` based on the given primitive `bool`.
+    /// If the value is `true`, it will return `Boolean::True` and
+    /// if the value is`false` will return `Boolean::False`
     pub fn new(value: bool) -> Self {
         if value {
             Self::True
@@ -44,8 +51,8 @@ impl Bool {
     /// | [`False`] | [`False`] | [`False`] |
     ///
     ///
-    /// [`True`]: enum.Bool.html#variant.True
-    /// [`False`]: enum.Bool.html#variant.False
+    /// [`True`]: enum.Boolean.html#variant.True
+    /// [`False`]: enum.Boolean.html#variant.False
     /// [`and`]: https://en.wikipedia.org/wiki/Boolean_algebra#Operations
     #[inline]
     pub fn and<R: Into<Self>>(self, rhs: R) -> Self {
@@ -69,8 +76,8 @@ impl Bool {
     /// | [`False`] | [`False`] | [`False`] |
     ///
     ///
-    /// [`True`]: enum.Bool.html#variant.True
-    /// [`False`]: enum.Bool.html#variant.False
+    /// [`True`]: enum.Boolean.html#variant.True
+    /// [`False`]: enum.Boolean.html#variant.False
     /// [`or`]: https://en.wikipedia.org/wiki/Boolean_algebra#Operations
     #[inline]
     pub fn or<R: Into<Self>>(self, rhs: R) -> Self {
@@ -92,8 +99,8 @@ impl Bool {
     /// | [`False`]  | [`True`]  |
     ///
     ///
-    /// [`True`]: enum.Bool.html#variant.True
-    /// [`False`]: enum.Bool.html#variant.False
+    /// [`True`]: enum.Boolean.html#variant.True
+    /// [`False`]: enum.Boolean.html#variant.False
     /// [`not`]: https://en.wikipedia.org/wiki/Boolean_algebra#Operations
     #[inline]
     pub fn not(self) -> Self {
@@ -116,8 +123,8 @@ impl Bool {
     /// | [`False`] | [`False`] | [`True`] |
     ///
     ///
-    /// [`True`]: enum.Bool.html#variant.True
-    /// [`False`]: enum.Bool.html#variant.False
+    /// [`True`]: enum.Boolean.html#variant.True
+    /// [`False`]: enum.Boolean.html#variant.False
     /// [`xor`]: https://en.wikipedia.org/wiki/Boolean_algebra#Operations
     #[inline]
     pub fn implication<R: Into<Self>>(self, rhs: R) -> Self {
@@ -140,8 +147,8 @@ impl Bool {
     /// | [`False`] | [`False`] | [`False`] |
     ///
     ///
-    /// [`True`]: enum.Bool.html#variant.True
-    /// [`False`]: enum.Bool.html#variant.False
+    /// [`True`]: enum.Boolean.html#variant.True
+    /// [`False`]: enum.Boolean.html#variant.False
     /// [`xor`]: https://en.wikipedia.org/wiki/Boolean_algebra#Operations
     #[inline]
     pub fn xor<R: Into<Self>>(self, rhs: R) -> Self {
@@ -164,8 +171,8 @@ impl Bool {
     /// | [`False`] | [`False`] | [`True`] |
     ///
     ///
-    /// [`True`]: enum.Bool.html#variant.True
-    /// [`False`]: enum.Bool.html#variant.False
+    /// [`True`]: enum.Boolean.html#variant.True
+    /// [`False`]: enum.Boolean.html#variant.False
     /// [`equivalence`]: https://en.wikipedia.org/wiki/Boolean_algebra#Operations
     #[inline]
     pub fn equivalence<R: Into<Self>>(self, rhs: R) -> Self {
@@ -203,7 +210,7 @@ impl Bool {
     }
 }
 
-impl From<bool> for Bool {
+impl From<bool> for Boolean {
     fn from(item: bool) -> Self {
         if item {
             Self::True
@@ -213,29 +220,29 @@ impl From<bool> for Bool {
     }
 }
 
-impl From<Bool> for bool {
-    fn from(item: Bool) -> Self {
+impl From<Boolean> for bool {
+    fn from(item: Boolean) -> Self {
         match item {
-            Bool::True => true,
-            Bool::False => false,
+            Boolean::True => true,
+            Boolean::False => false,
         }
     }
 }
 
-impl From<&Bool> for bool {
-    fn from(item: &Bool) -> Self {
+impl From<&Boolean> for bool {
+    fn from(item: &Boolean) -> Self {
         match item {
-            Bool::True => true,
-            Bool::False => false,
+            Boolean::True => true,
+            Boolean::False => false,
         }
     }
 }
 
-impl From<&mut Bool> for bool {
-    fn from(item: &mut Bool) -> Self {
+impl From<&mut Boolean> for bool {
+    fn from(item: &mut Boolean) -> Self {
         match item {
-            Bool::True => true,
-            Bool::False => false,
+            Boolean::True => true,
+            Boolean::False => false,
         }
     }
 }
@@ -248,18 +255,18 @@ macro_rules! delegated_impl {
     };
 }
 
-impl Not for Bool {
+impl Not for Boolean {
     type Output = Self;
 
     fn not(self) -> Self::Output {
         match self {
-            Bool::True => Bool::False,
-            Bool::False => Bool::True,
+            Boolean::True => Boolean::False,
+            Boolean::False => Boolean::True,
         }
     }
 }
 
-impl BitAnd for Bool {
+impl BitAnd for Boolean {
     type Output = Self;
 
     fn bitand(self, rhs: Self) -> Self::Output {
@@ -267,13 +274,13 @@ impl BitAnd for Bool {
     }
 }
 
-impl BitAndAssign for Bool {
+impl BitAndAssign for Boolean {
     fn bitand_assign(&mut self, rhs: Self) {
         *self = self.bitand(rhs);
     }
 }
 
-impl BitOr for Bool {
+impl BitOr for Boolean {
     type Output = Self;
 
     fn bitor(self, rhs: Self) -> Self::Output {
@@ -281,13 +288,13 @@ impl BitOr for Bool {
     }
 }
 
-impl BitOrAssign for Bool {
+impl BitOrAssign for Boolean {
     fn bitor_assign(&mut self, rhs: Self) {
         *self = self.bitor(rhs);
     }
 }
 
-impl BitXor for Bool {
+impl BitXor for Boolean {
     type Output = Self;
 
     fn bitxor(self, rhs: Self) -> Self::Output {
@@ -295,17 +302,17 @@ impl BitXor for Bool {
     }
 }
 
-impl BitXorAssign for Bool {
+impl BitXorAssign for Boolean {
     fn bitxor_assign(&mut self, rhs: Self) {
         *self = self.bitxor(rhs);
     }
 }
 
-/// The default for [`Bool`] is [`False`].
+/// The default for [`Boolean`] is [`False`].
 ///
-/// [`Bool`]: enum.Bool.html
-/// [`False`]: enum.Bool.html#variant.False
-impl Default for Bool {
+/// [`Boolean`]: enum.Boolean.html
+/// [`False`]: enum.Boolean.html#variant.False
+impl Default for Boolean {
     fn default() -> Self {
         Self::False
     }
@@ -318,12 +325,12 @@ impl Default for Bool {
 /// Example:
 /// ```
 /// # use ::bool::{b, Bool};
-/// if b!(Bool::True) {
+/// if b!(Boolean::True) {
 ///     println!("Always true :)!");
 /// }
 /// ```
 ///
-/// [`Bool`]: enum.Bool.html
+/// [`Boolean`]: enum.Boolean.html
 /// [`bool`]: https://doc.rust-lang.org/std/primitive.bool.html
 #[macro_export]
 macro_rules! b {
@@ -344,14 +351,14 @@ mod tests {
         ide!();
 
         #[pm(input = {
-        true,
-        false,
+            true,
+            false,
         }, expected = {
-        Bool::True,
-        Bool::False,
+            Boolean::True,
+            Boolean::False,
         })]
-        fn test_cases(input: bool, expected: Bool) {
-            let instance = Bool::new(input);
+        fn test_cases(input: bool, expected: Boolean) {
+            let instance = Boolean::new(input);
             assert_eq!(instance, expected);
         }
     }
@@ -369,22 +376,22 @@ mod tests {
                 ide!();
 
                 #[pm(lhs = {
-                    Bool::False,
-                    Bool::False,
-                    Bool::True,
-                    Bool::True,
+                    Boolean::False,
+                    Boolean::False,
+                    Boolean::True,
+                    Boolean::True,
                 }, rhs = {
-                    Bool::False,
-                    Bool::True,
-                    Bool::False,
-                    Bool::True,
+                    Boolean::False,
+                    Boolean::True,
+                    Boolean::False,
+                    Boolean::True,
                 }, expected = {
                     $expected1,
                     $expected2,
                     $expected3,
                     $expected4,
                 })]
-                fn test_cases(lhs: Bool, rhs: Bool, expected: Bool) {
+                fn test_cases(lhs: Boolean, rhs: Boolean, expected: Boolean) {
                     assert_eq!(lhs.$op(rhs), expected);
                 }
             }
@@ -395,38 +402,38 @@ mod tests {
         use super::*;
 
         test_logical_operation! {and,
-            Bool::False,
-            Bool::False,
-            Bool::False,
-            Bool::True
+            Boolean::False,
+            Boolean::False,
+            Boolean::False,
+            Boolean::True
         }
 
         test_logical_operation! {or,
-            Bool::False,
-            Bool::True,
-            Bool::True,
-            Bool::True
+            Boolean::False,
+            Boolean::True,
+            Boolean::True,
+            Boolean::True
         }
 
         test_logical_operation! {implication,
-            Bool::True,
-            Bool::True,
-            Bool::False,
-            Bool::True
+            Boolean::True,
+            Boolean::True,
+            Boolean::False,
+            Boolean::True
         }
 
         test_logical_operation! {xor,
-            Bool::False,
-            Bool::True,
-            Bool::True,
-            Bool::False
+            Boolean::False,
+            Boolean::True,
+            Boolean::True,
+            Boolean::False
         }
 
         test_logical_operation! {equivalence,
-            Bool::True,
-            Bool::False,
-            Bool::False,
-            Bool::True
+            Boolean::True,
+            Boolean::False,
+            Boolean::False,
+            Boolean::True
         }
     }
 
@@ -436,13 +443,13 @@ mod tests {
         ide!();
 
         #[pm(lhs = {
-        Bool::True,
-        Bool::False,
+            Boolean::True,
+            Boolean::False,
         }, expected = {
-        Bool::False,
-        Bool::True,
+            Boolean::False,
+            Boolean::True,
         })]
-        fn test_cases(lhs: Bool, expected: Bool) {
+        fn test_cases(lhs: Boolean, expected: Boolean) {
             assert_eq!(lhs.not(), expected);
         }
     }
@@ -454,14 +461,14 @@ mod tests {
         ide!();
 
         #[pm(input = {
-        true,
-        false,
+            true,
+            false,
         }, expected = {
-        Bool::True,
-        Bool::False,
+            Boolean::True,
+            Boolean::False,
         })]
-        fn test_cases(input: bool, expected: Bool) {
-            let instance: Bool = From::from(input);
+        fn test_cases(input: bool, expected: Boolean) {
+            let instance: Boolean = From::from(input);
             assert_eq!(instance, expected);
         }
     }
@@ -473,13 +480,13 @@ mod tests {
         ide!();
 
         #[pm(input = {
-        Bool::True,
-        Bool::False,
+            Boolean::True,
+            Boolean::False,
         }, expected = {
-        true,
-        false,
+            true,
+            false,
         })]
-        fn test_cases(input: Bool, expected: bool) {
+        fn test_cases(input: Boolean, expected: bool) {
             let instance: bool = From::from(input);
             assert_eq!(instance, expected);
         }
@@ -502,14 +509,14 @@ mod tests {
         #[test]
         #[allow(non_snake_case)]
         fn crate_Bool() {
-            assert_eq!(core::mem::size_of::<Bool>(), 1)
+            assert_eq!(core::mem::size_of::<Boolean>(), 1)
         }
 
         #[test]
         #[allow(non_snake_case)]
         fn crate_Bool_value() {
-            assert_eq!(core::mem::size_of_val(&Bool::True), 1);
-            assert_eq!(core::mem::size_of_val(&Bool::False), 1);
+            assert_eq!(core::mem::size_of_val(&Boolean::True), 1);
+            assert_eq!(core::mem::size_of_val(&Boolean::False), 1);
         }
     }
 
@@ -520,20 +527,20 @@ mod tests {
         ide!();
 
         #[pm(input = {
-        True,
-        False,
+            True,
+            False,
         }, expected = {
-        Bool::True,
-        Bool::False,
+            Boolean::True,
+            Boolean::False,
         })]
-        fn test_cases(input: Bool, expected: Bool) {
+        fn test_cases(input: Boolean, expected: Boolean) {
             assert_eq!(input, expected);
         }
     }
 
     #[test]
     fn macro_cond() {
-        let condition = Bool::False;
+        let condition = Boolean::False;
 
         let out = if b!(condition) { 1 } else { 0 };
 
@@ -553,22 +560,22 @@ mod tests {
                 ide!();
 
                 #[pm(lhs = {
-                    Bool::False,
-                    Bool::False,
-                    Bool::True,
-                    Bool::True,
+                    Boolean::False,
+                    Boolean::False,
+                    Boolean::True,
+                    Boolean::True,
                 }, rhs = {
-                    Bool::False,
-                    Bool::True,
-                    Bool::False,
-                    Bool::True,
+                    Boolean::False,
+                    Boolean::True,
+                    Boolean::False,
+                    Boolean::True,
                 }, expected = {
                     $expected1,
                     $expected2,
                     $expected3,
                     $expected4,
                 })]
-                fn test_cases(lhs: Bool, rhs: Bool, expected: Bool) {
+                fn test_cases(lhs: Boolean, rhs: Boolean, expected: Boolean) {
                     assert_eq!(lhs.$name(rhs), expected);
                     assert_eq!(lhs $op rhs, expected);
                 }
@@ -580,24 +587,24 @@ mod tests {
         use super::*;
 
         test_operator! {bitand, &,
-            Bool::False,
-            Bool::False,
-            Bool::False,
-            Bool::True
+            Boolean::False,
+            Boolean::False,
+            Boolean::False,
+            Boolean::True
         }
 
         test_operator! {bitor, |,
-            Bool::False,
-            Bool::True,
-            Bool::True,
-            Bool::True
+            Boolean::False,
+            Boolean::True,
+            Boolean::True,
+            Boolean::True
         }
 
         test_operator! {bitxor, ^,
-            Bool::False,
-            Bool::True,
-            Bool::True,
-            Bool::False
+            Boolean::False,
+            Boolean::True,
+            Boolean::True,
+            Boolean::False
         }
     }
 
@@ -614,22 +621,22 @@ mod tests {
                 ide!();
 
                 #[pm(lhs = {
-                    Bool::False,
-                    Bool::False,
-                    Bool::True,
-                    Bool::True,
+                    Boolean::False,
+                    Boolean::False,
+                    Boolean::True,
+                    Boolean::True,
                 }, rhs = {
-                    Bool::False,
-                    Bool::True,
-                    Bool::False,
-                    Bool::True,
+                    Boolean::False,
+                    Boolean::True,
+                    Boolean::False,
+                    Boolean::True,
                 }, expected = {
                     $expected1,
                     $expected2,
                     $expected3,
                     $expected4,
                 })]
-                fn test_cases(lhs: Bool, rhs: Bool, expected: Bool) {
+                fn test_cases(lhs: Boolean, rhs: Boolean, expected: Boolean) {
                     let mut a = lhs;
                     a.$name(rhs);
 
@@ -647,24 +654,24 @@ mod tests {
         use super::*;
 
         test_operator_assign! {bitand_assign, &=,
-            Bool::False,
-            Bool::False,
-            Bool::False,
-            Bool::True
+            Boolean::False,
+            Boolean::False,
+            Boolean::False,
+            Boolean::True
         }
 
         test_operator_assign! {bitor_assign, |=,
-            Bool::False,
-            Bool::True,
-            Bool::True,
-            Bool::True
+            Boolean::False,
+            Boolean::True,
+            Boolean::True,
+            Boolean::True
         }
 
         test_operator_assign! {bitxor_assign, ^=,
-            Bool::False,
-            Bool::True,
-            Bool::True,
-            Bool::False
+            Boolean::False,
+            Boolean::True,
+            Boolean::True,
+            Boolean::False
         }
     }
 
@@ -673,8 +680,8 @@ mod tests {
 
         #[test]
         fn test_case() {
-            let crate_t = Bool::True;
-            let crate_f = Bool::False;
+            let crate_t = Boolean::True;
+            let crate_f = Boolean::False;
             let primitive_t = true;
             let primitive_f = false;
 
@@ -691,17 +698,17 @@ mod tests {
         ide!();
 
         #[pm(lhs = {
-            Bool::False,
-            Bool::False,
-            Bool::True,
-            Bool::True,
+            Boolean::False,
+            Boolean::False,
+            Boolean::True,
+            Boolean::True,
         }, rhs = {
-            Bool::False,
-            Bool::True,
-            Bool::False,
-            Bool::True,
+            Boolean::False,
+            Boolean::True,
+            Boolean::False,
+            Boolean::True,
         })]
-        fn de_morgan(lhs: Bool, rhs: Bool) {
+        fn de_morgan(lhs: Boolean, rhs: Boolean) {
             assert_eq!(lhs.not().and(rhs.not()), (lhs.or(rhs)).not());
 
             assert_eq!(lhs.not().or(rhs.not()), (lhs.and(rhs)).not());
@@ -713,10 +720,10 @@ mod tests {
 
         #[test]
         fn is_bool() {
-            assert_eq!(Bool::True.is_true(), true);
-            assert_eq!(Bool::True.is_false(), false);
-            assert_eq!(Bool::False.is_true(), false);
-            assert_eq!(Bool::False.is_false(), true);
+            assert_eq!(Boolean::True.is_true(), true);
+            assert_eq!(Boolean::True.is_false(), false);
+            assert_eq!(Boolean::False.is_true(), false);
+            assert_eq!(Boolean::False.is_false(), true);
         }
     }
 
@@ -725,14 +732,14 @@ mod tests {
 
         #[test]
         fn then_some() {
-            assert_eq!(Bool::True.then_some(1u8), Some(1u8));
-            assert_eq!(Bool::False.then_some(1u8), None);
+            assert_eq!(Boolean::True.then_some(1u8), Some(1u8));
+            assert_eq!(Boolean::False.then_some(1u8), None);
         }
 
         #[test]
         fn then() {
-            assert_eq!(Bool::True.then(|| 1u8), Some(1u8));
-            assert_eq!(Bool::False.then(|| 1u8), None);
+            assert_eq!(Boolean::True.then(|| 1u8), Some(1u8));
+            assert_eq!(Boolean::False.then(|| 1u8), None);
         }
     }
 }
