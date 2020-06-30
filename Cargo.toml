@@ -1,6 +1,6 @@
 [package]
 name = "bool"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["foresterre <garm@ilumeo.com>"]
 edition = "2018"
 description = "Straightforward re-useable enum based boolean (which you likely won't need =))"
